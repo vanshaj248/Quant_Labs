@@ -1,85 +1,167 @@
 # Quantitative Finance Career Roadmap (June - May)
+Here’s a detailed July–June roadmap for your 3rd year to break into quantitative finance, tailored for roles like Risk Manager, Portfolio Manager, Financial Risk Consultant, Quantitative Asset Manager, or Quantitative Consultant. This guide excludes FRM/CFA prep and focuses on building skills, education, networking, and internship readiness.
 
-## Phase 1: Foundational Learning and Skill Acquisition (June - August)
+⸻
 
-### Books to Read  
-**Introduction to Quantitative Finance:**
-- *Mathematics for Finance: An Introduction to Financial Engineering* by Marek Capinski.  
-- *Python for Finance* by Yves Hilpisch.  
+🎯 OVERALL STRATEGY
+	•	Build a strong quant + finance + coding foundation
+	•	Apply for internships by Jan–Feb
+	•	Build 2–3 quant projects
+	•	Start publishing/engaging on LinkedIn & GitHub
+	•	Network with professionals on LinkedIn
+	•	Focus on asset management & risk-focused topics
 
-**Risk and Portfolio Management:**
-- *Quantitative Risk Management* by McNeil, Frey, and Embrechts.  
-- *Portfolio Management in Practice* by Bayraktar and Lall.  
+⸻
 
-### Courses to Take  
-**Programming and Data Analysis:** Python (Coursera, edX, or DataCamp).  
-**Quantitative Finance Basics:** "Financial Engineering and Risk Management" (Columbia University).  
-**Mathematics for Finance:** Statistics, linear algebra, and calculus (Khan Academy/Brilliant).  
+🗓️ MONTHLY ROADMAP (July 2025 – June 2026)
 
-### Skills Development  
-- Focus on Python, SQL, and basic R.  
-- Learn financial modeling in Excel.  
-- Study visualization tools like Tableau or Power BI.
+⸻
 
----
+📅 July–August 2025: Foundations in Quant Finance + Coding
 
-## Phase 2: Projects and Networking (September - December)
+1. Mathematics Refresher (Start Simple)
+	•	Topics: Linear Algebra, Probability, Statistics, Calculus
+	•	Book: “Mathematics for Machine Learning” – Deisenroth et al.
+	•	Projects: Simulate random walks, Brownian motion
 
-### Projects  
-- Portfolio Optimization using Python (Modern Portfolio Theory).  
-- Risk Analysis Dashboard in Tableau.  
-- Develop a VaR model or Monte Carlo simulation for risk prediction.  
+2. Finance Basics
+	•	Topics: Time value of money, asset classes, fixed income, equities, derivatives
+	•	Book: “Corporate Finance” by Jonathan Berk and Peter DeMarzo
+	•	Course: Coursera - Introduction to Finance (University of Michigan)
 
-### Networking Strategy  
-- Join LinkedIn groups (Quantitative Finance Network).  
-- Participate in forums like QuantNet, Wilmott, or Risk.net.  
-- Connect with alumni or industry professionals for informational interviews.  
+3. Tools to Learn
+	•	Python (NumPy, Pandas, Matplotlib, Seaborn)
+	•	Git and GitHub for version control
 
-### Build Online Presence  
-- Publish projects on GitHub.  
-- Share insights on LinkedIn to demonstrate industry interest.
+⸻
 
----
+📅 September–October 2025: Financial Engineering Core + Projects Begin
 
-## Phase 3: Internship Preparation and Applications (January - March Next Year)
+1. Quantitative Finance Core
+	•	Topics: Risk-neutral pricing, Monte Carlo simulation, Black-Scholes, options, VaR (Value-at-Risk)
+	•	Book: “Options, Futures and Other Derivatives” – John C. Hull (selected chapters)
+	•	Mini-Projects:
+	•	Black-Scholes option pricing simulator
+	•	Monte Carlo VaR estimation
 
-### CV and Cover Letter  
-- Emphasize technical projects, certifications, and skills.  
-- Tailor your CV for each role (Risk Analyst, Portfolio Assistant, Quantitative Intern).  
+2. Portfolio Theory
+	•	Topics: Modern Portfolio Theory (MPT), Efficient Frontier, CAPM, Factor Models
+	•	Book: “Quantitative Investment Analysis” – CFA Institute (Volume 3 from Investment Series)
+	•	Course: Portfolio Selection and Risk Management – Rice (Coursera)
 
-### Application Platforms  
-- Use Handshake, Internshala, and LinkedIn.  
-- Target finance firms, banks, and fintech startups.  
+3. Start Networking
+	•	Optimize LinkedIn & GitHub
+	•	Start posting project threads
+	•	Connect with alumni and professionals in asset management/risk
 
-### Interview Preparation  
-- Learn finance case studies.  
-- Practice coding challenges (HackerRank or LeetCode).  
+⸻
 
----
+📅 November–December 2025: Quant Tools + Risk Management + Internship Prep
 
-## Phase 4: Advanced Topics and Hands-on Experience (April - May Next Year)
+1. Risk Management (Your Focus Area!)
+	•	Topics: Market Risk, Credit Risk, Operational Risk, Liquidity Risk, Stress Testing, VaR Models
+	•	Book: “Risk Management and Financial Institutions” – John C. Hull
+	•	Case Studies: LTCM Collapse, 2008 Crisis, Archegos
 
-### Topics to Explore  
-- Machine Learning in Finance (Scikit-Learn, TensorFlow).  
-- Advanced Portfolio Management (Dynamic Rebalancing).  
-- Algorithmic Trading (basic strategies using Python).  
+2. Financial Modeling + Python Projects
+	•	Tools:
+	•	Python (QuantLib, yfinance, Pyfolio)
+	•	Excel for basic financial modeling
+	•	Mini-Projects:
+	•	Factor-based portfolio backtesting
+	•	Credit scoring using logistic regression
 
-### Industry Exposure  
-- Take part in quant finance competitions (Kaggle, QuantInsti).  
-- Volunteer for academic or industry research projects.  
+3. Internship Applications Start
+	•	Build a project-based resume
+	•	Apply to off-campus roles (LinkedIn, Indeed, AngelList, fund websites)
+	•	Use LinkedIn to message analysts, interns, and HRs politely
 
----
+⸻
 
-## Recommended Tools and Platforms
-- **Programming:** Python (Pandas, NumPy, SciPy), SQL, and R.  
-- **Visualization:** Tableau, Power BI, and Matplotlib.  
-- **Financial Data:** Bloomberg Terminal, Yahoo Finance API, Quandl.  
-- **Collaboration:** GitHub and LinkedIn.
+📅 January–February 2026: Advanced Topics + Interview Prep
 
----
+1. Advanced Portfolio & Quant Research
+	•	Topics: Smart Beta, Alpha strategies, Sharpe Ratio, Information Ratio
+	•	Book: “Quantitative Equity Portfolio Management” – Chincarini & Kim
+	•	Project: Smart Beta ETF screener
 
-## Outcome by May Next Year
-- Projects in your portfolio.  
-- Networking connections in finance.  
-- Internships or research experience in quant finance roles.  
-- Knowledge of tools and real-world applications relevant to your desired roles.
+2. Machine Learning for Finance
+	•	Topics: Regression, Classification, Time Series (ARIMA, LSTM), Feature Engineering
+	•	Course: AI For Trading – Udacity (free access possible via GitHub Student Pack)
+
+3. Interview Practice
+	•	Practice case studies (e.g., “How would you hedge this portfolio?”)
+	•	Read: “Heard on the Street” – Timothy Crack for quant interviews
+
+⸻
+
+📅 March–April 2026: Full Portfolio + Internships + Showcasing Work
+
+1. Quant Portfolio Completion
+	•	Host all code on GitHub
+	•	Publish blog posts (use Medium or LinkedIn)
+	•	Resume now includes: 3+ projects, GitHub, blogs, coursework
+
+2. More Advanced Risk Topics
+	•	Topics: Copula models, GARCH, Basel III, scenario analysis
+	•	Read: Research papers from SSRN/arXiv (search “financial risk quant”)
+
+3. Start Attending Webinars & Competitions
+	•	Participate in:
+	•	QuantInsti competitions
+	•	Kaggle finance projects
+	•	CFA Society India events (no need for CFA prep)
+
+⸻
+
+📅 May–June 2026: Wrap-Up & Summer Internship
+
+1. Internship Focus
+	•	Apply/accept summer internship (even unpaid, focus on experience)
+	•	Target: Risk teams, fintechs, analytics consultancies, trading desks
+
+2. Capstone Project
+	•	Build a full asset allocation engine:
+	•	Optimize portfolio using MPT
+	•	Risk adjusted returns via Sharpe/Sortino
+	•	Python/Streamlit-based UI
+
+3. Plan for Final Year
+	•	Aim for MFE/MFin applications (start July 2026)
+	•	Create shortlist of firms & MFE programs
+
+⸻
+
+🔧 Essential Skills & Tools to Learn
+
+Domain	Tools/Topics
+Programming	Python, SQL, Git, Excel
+Statistics	Linear Regression, Hypothesis Testing, Time Series
+Portfolio/Risk	CAPM, APT, VaR, CVaR, Backtesting
+Visualization	Matplotlib, Seaborn, Plotly
+Data Sources	Yahoo Finance, Quandl, FRED
+Others	Streamlit (dashboards), Flask (APIs)
+
+
+⸻
+
+🔍 Where to Network & Find Internships
+	•	LinkedIn: Reach out to professionals, follow firms
+	•	Internship Sites: Internshala, AngelList, Indeed, QuantInsti board
+	•	Communities: Quantitative Finance StackExchange, r/quant, r/financialindependence
+	•	Events: IIT/IIQF/QuantInsti webinars
+
+⸻
+
+✅ Final Deliverables by June 2026
+	•	Resume with:
+	•	3+ quant projects (GitHub linked)
+	•	Blog posts/case studies
+	•	Coursework list
+	•	Internship experience
+	•	LinkedIn fully optimized
+	•	Network of 100+ quant professionals
+
+⸻
+
+Would you like me to turn this into a downloadable roadmap in .pdf or .md format with a checklist and links?
