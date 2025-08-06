@@ -190,5 +190,3 @@ FinTech	The FINTECH Book	FinTech – University of Michigan
 	•	Practice Platform: QuantConnect, Kaggle
 
 ⸻
-
-Would you like this syllabus as a .pdf, Excel sheet, or Notion-ready template for tracking?
