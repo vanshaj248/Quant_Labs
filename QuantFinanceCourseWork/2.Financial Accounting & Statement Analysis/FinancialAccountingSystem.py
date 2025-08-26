@@ -1,422 +1,218 @@
 import sqlite3
-import pandas as pd
+from datetime import datetime
+import os
 
-class FinancialAccountingSystem:
-    def __init__(self, db_name='financial_accounting.db'):
-        self.db_name = db_name
-        self.init_database()
-    
-    def init_database(self):
-        """Initialize the database with all required tables"""
-        conn = sqlite3.connect(self.db_name)
-        cursor = conn.cursor()
+class AccountingDashboard:
+    def __init__(self):
+        # Initialize database
+        self.init_db()
+
+    def init_db(self):
+        """Initialize the database and create table if it doesn't exist"""
+        db_path = os.path.join(os.path.dirname(__file__), 'accounting.db')
+        self.conn = sqlite3.connect(db_path)
+        self.cursor = self.conn.cursor()
         
-        # Chart of Accounts
-        cursor.execute('''
-        CREATE TABLE IF NOT EXISTS chart_of_accounts (
-            account_id INTEGER PRIMARY KEY,
-            account_number TEXT UNIQUE,
-            account_name TEXT NOT NULL,
-            account_type TEXT CHECK(account_type IN ('Asset', 'Liability', 'Equity', 'Revenue', 'Expense')),
-            normal_balance TEXT CHECK(normal_balance IN ('Debit', 'Credit')),
-            description TEXT,
-            is_active BOOLEAN DEFAULT TRUE
-        )
+        # Create table if it doesn't exist
+        self.cursor.execute('''
+            CREATE TABLE IF NOT EXISTS accounts (
+                acc_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                acc_no TEXT NOT NULL UNIQUE,
+                acc_name TEXT NOT NULL,
+                acc_type TEXT NOT NULL,
+                normal_balance TEXT CHECK(normal_balance IN ('Debit', 'Credit')),
+                description TEXT,
+                is_active INTEGER DEFAULT 1,
+                equity_amount REAL DEFAULT 0,
+                created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
         ''')
+        self.conn.commit()
+
+    def load_data(self):
+        """Load data from database and print to terminal"""
+        # Fetch data from database
+        self.cursor.execute("SELECT * FROM accounts ORDER BY acc_no")
+        rows = self.cursor.fetchall()
         
-        # Journal Entries
-        cursor.execute('''
-        CREATE TABLE IF NOT EXISTS journal_entries (
-            entry_id INTEGER PRIMARY KEY,
-            entry_date DATE NOT NULL,
-            description TEXT,
-            reference TEXT,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-        ''')
+        if not rows:
+            print("No accounts found.")
+            return
         
-        # Journal Entry Lines
-        cursor.execute('''
-        CREATE TABLE IF NOT EXISTS journal_entry_lines (
-            line_id INTEGER PRIMARY KEY,
-            entry_id INTEGER,
-            account_id INTEGER,
-            amount DECIMAL(15,2) NOT NULL,
-            side TEXT CHECK(side IN ('Debit', 'Credit')),
-            description TEXT,
-            FOREIGN KEY (entry_id) REFERENCES journal_entries (entry_id),
-            FOREIGN KEY (account_id) REFERENCES chart_of_accounts (account_id)
-        )
-        ''')
-        
-        # Customers
-        cursor.execute('''
-        CREATE TABLE IF NOT EXISTS customers (
-            customer_id INTEGER PRIMARY KEY,
-            name TEXT NOT NULL,
-            contact_info TEXT,
-            credit_limit DECIMAL(15,2),
-            balance DECIMAL(15,2) DEFAULT 0
-        )
-        ''')
-        
-        # Vendors
-        cursor.execute('''
-        CREATE TABLE IF NOT EXISTS vendors (
-            vendor_id INTEGER PRIMARY KEY,
-            name TEXT NOT NULL,
-            contact_info TEXT,
-            payment_terms TEXT
-        )
-        ''')
-        
-        # Inventory Items
-        cursor.execute('''
-        CREATE TABLE IF NOT EXISTS inventory (
-            item_id INTEGER PRIMARY KEY,
-            item_code TEXT UNIQUE,
-            description TEXT,
-            unit_cost DECIMAL(15,2),
-            quantity_on_hand INTEGER DEFAULT 0,
-            reorder_level INTEGER DEFAULT 0
-        )
-        ''')
-        
-        conn.commit()
-        conn.close()
-        
-        # Initialize default accounts if not exists
-        self.initialize_default_accounts()
-    
-    def initialize_default_accounts(self):
-        """Create default chart of accounts"""
-        default_accounts = [
-            # Assets
-            ('1010', 'Cash', 'Asset', 'Debit', 'Main operating cash account'),
-            ('1200', 'Accounts Receivable', 'Asset', 'Debit', 'Amounts owed by customers'),
-            ('1400', 'Inventory', 'Asset', 'Debit', 'Goods available for sale'),
-            ('1500', 'Equipment', 'Asset', 'Debit', 'Office equipment and furniture'),
-            
-            # Liabilities
-            ('2000', 'Accounts Payable', 'Liability', 'Credit', 'Amounts owed to vendors'),
-            ('2500', 'Loans Payable', 'Liability', 'Credit', 'Outstanding loans'),
-            
-            # Equity
-            ('3000', 'Owner\'s Capital', 'Equity', 'Credit', 'Owner investment'),
-            ('3500', 'Retained Earnings', 'Equity', 'Credit', 'Accumulated profits'),
-            
-            # Revenue
-            ('4000', 'Sales Revenue', 'Revenue', 'Credit', 'Revenue from product sales'),
-            ('4100', 'Service Revenue', 'Revenue', 'Credit', 'Revenue from services'),
-            
-            # Expenses
-            ('5000', 'Cost of Goods Sold', 'Expense', 'Debit', 'Cost of inventory sold'),
-            ('5100', 'Salaries Expense', 'Expense', 'Debit', 'Employee salaries'),
-            ('5200', 'Rent Expense', 'Expense', 'Debit', 'Office rent'),
-            ('5300', 'Utilities Expense', 'Expense', 'Debit', 'Electricity, water, etc.'),
-            ('5400', 'Advertising Expense', 'Expense', 'Debit', 'Marketing and advertising')
-        ]
-        
-        conn = sqlite3.connect(self.db_name)
-        cursor = conn.cursor()
-        
-        for account in default_accounts:
-            cursor.execute('''
-            INSERT OR IGNORE INTO chart_of_accounts 
-            (account_number, account_name, account_type, normal_balance, description)
-            VALUES (?, ?, ?, ?, ?)
-            ''', account)
-        
-        conn.commit()
-        conn.close()
-    
-    def create_journal_entry(self, entry_date, description, reference, entries):
-        """
-        Create a journal entry with debit and credit entries
-        entries: list of tuples (account_number, amount, side, line_description)
-        """
-        conn = sqlite3.connect(self.db_name)
-        cursor = conn.cursor()
+        print(f"{'ID':<4} {'Account No':<12} {'Account Name':<20} {'Type':<10} {'Normal Balance':<15} {'Active':<7} Description")
+        print("-"*80)
+        for row in rows:
+            is_active = "Yes" if row[6] else "No"
+            description = row[5] if row[5] else ""
+            print(f"{row[0]:<4} {row[1]:<12} {row[2]:<20} {row[3]:<10} {row[4]:<15} {is_active:<7} {description}")
+        print(f"\nLoaded {len(rows)} accounts.\n")
+
+    def add_account(self, acc_no, acc_name, acc_type, normal_balance, description, is_active):
+        """Add a new account to the database"""
+        # Validate required fields
+        if not acc_no or not acc_name or not acc_type or not normal_balance:
+            print("Error: Please fill in all required fields.")
+            return
         
         try:
-            # Verify accounting equation
-            total_debits = sum(entry[1] for entry in entries if entry[2].lower() == 'debit')
-            total_credits = sum(entry[1] for entry in entries if entry[2].lower() == 'credit')
+            # Insert into database
+            self.cursor.execute(
+                "INSERT INTO accounts (acc_no, acc_name, acc_type, normal_balance, description, is_active) VALUES (?, ?, ?, ?, ?, ?)",
+                (acc_no, acc_name, acc_type, normal_balance, description, 1 if is_active else 0)
+            )
+            self.conn.commit()
+            print(f"Account '{acc_name}' added successfully.\n")
             
-            if abs(total_debits - total_credits) > 0.01:
-                raise ValueError("Debits and credits must be equal")
-            
-            # Create journal entry
-            cursor.execute('''
-            INSERT INTO journal_entries (entry_date, description, reference)
-            VALUES (?, ?, ?)
-            ''', (entry_date, description, reference))
-            
-            entry_id = cursor.lastrowid
-            
-            # Add journal entry lines
-            for account_number, amount, side, line_desc in entries:
-                # Get account_id from account_number
-                cursor.execute('SELECT account_id FROM chart_of_accounts WHERE account_number = ?', (account_number,))
-                result = cursor.fetchone()
-                if not result:
-                    raise ValueError(f"Account number {account_number} not found")
-                
-                account_id = result[0]
-                
-                cursor.execute('''
-                INSERT INTO journal_entry_lines (entry_id, account_id, amount, side, description)
-                VALUES (?, ?, ?, ?, ?)
-                ''', (entry_id, account_id, amount, side, line_desc))
-            
-            conn.commit()
-            print(f"Journal entry created successfully. Entry ID: {entry_id}")
-            
-        except Exception as e:
-            conn.rollback()
-            print(f"Error creating journal entry: {e}")
-            raise
-        
-        finally:
-            conn.close()
-    
-    def get_account_balance(self, account_number, as_of_date=None):
-        """Get the balance of a specific account"""
-        conn = sqlite3.connect(self.db_name)
-        
-        query = '''
-        SELECT 
-            coa.account_number,
-            coa.account_name,
-            coa.account_type,
-            coa.normal_balance,
-            SUM(CASE WHEN jel.side = 'Debit' THEN jel.amount ELSE 0 END) as total_debits,
-            SUM(CASE WHEN jel.side = 'Credit' THEN jel.amount ELSE 0 END) as total_credits
-        FROM chart_of_accounts coa
-        LEFT JOIN journal_entry_lines jel ON coa.account_id = jel.account_id
-        LEFT JOIN journal_entries je ON jel.entry_id = je.entry_id
-        WHERE coa.account_number = ?
-        '''
-        
-        params = [account_number]
-        
-        if as_of_date:
-            query += ' AND je.entry_date <= ?'
-            params.append(as_of_date)
-        
-        query += ' GROUP BY coa.account_id'
-        
-        df = pd.read_sql_query(query, conn, params=params)
-        conn.close()
-        
-        if not df.empty:
-            row = df.iloc[0]
-            if row['normal_balance'] == 'Debit':
-                balance = row['total_debits'] - row['total_credits']
-            else:
-                balance = row['total_credits'] - row['total_debits']
-            
-            return float(balance) if balance else 0.0
-        
-        return 0.0
-    
-    def generate_trial_balance(self, as_of_date=None):
-        """Generate a trial balance"""
-        conn = sqlite3.connect(self.db_name)
-        
-        query = '''
-        SELECT 
-            coa.account_number,
-            coa.account_name,
-            coa.account_type,
-            coa.normal_balance,
-            SUM(CASE WHEN jel.side = 'Debit' THEN jel.amount ELSE 0 END) as total_debits,
-            SUM(CASE WHEN jel.side = 'Credit' THEN jel.amount ELSE 0 END) as total_credits
-        FROM chart_of_accounts coa
-        LEFT JOIN journal_entry_lines jel ON coa.account_id = jel.account_id
-        LEFT JOIN journal_entries je ON jel.entry_id = je.entry_id
-        WHERE coa.is_active = TRUE
-        '''
-        
-        params = []
-        if as_of_date:
-            query += ' AND je.entry_date <= ?'
-            params.append(as_of_date)
-        
-        query += '''
-        GROUP BY coa.account_id
-        ORDER BY coa.account_number
-        '''
-        
-        df = pd.read_sql_query(query, conn, params=params)
-        conn.close()
-        
-        # Calculate balances
-        def calculate_balance(row):
-            if row['normal_balance'] == 'Debit':
-                return row['total_debits'] - row['total_credits']
-            else:
-                return row['total_credits'] - row['total_debits']
-        
-        df['balance'] = df.apply(calculate_balance, axis=1)
-        
-        return df
-    
-    def generate_income_statement(self, start_date, end_date):
-        """Generate income statement for a period"""
-        conn = sqlite3.connect(self.db_name)
-        
-        # Get revenue and expense accounts
-        query = '''
-        SELECT 
-            coa.account_number,
-            coa.account_name,
-            coa.account_type,
-            SUM(CASE WHEN jel.side = 'Debit' THEN jel.amount ELSE 0 END) as debits,
-            SUM(CASE WHEN jel.side = 'Credit' THEN jel.amount ELSE 0 END) as credits
-        FROM chart_of_accounts coa
-        JOIN journal_entry_lines jel ON coa.account_id = jel.account_id
-        JOIN journal_entries je ON jel.entry_id = je.entry_id
-        WHERE coa.account_type IN ('Revenue', 'Expense')
-        AND je.entry_date BETWEEN ? AND ?
-        GROUP BY coa.account_id
-        ORDER BY coa.account_type, coa.account_number
-        '''
-        
-        df = pd.read_sql_query(query, conn, params=(start_date, end_date))
-        conn.close()
-        
-        # Calculate net amounts
-        revenue_df = df[df['account_type'] == 'Revenue']
-        expense_df = df[df['account_type'] == 'Expense']
-        
-        total_revenue = (revenue_df['credits'] - revenue_df['debits']).sum()
-        total_expenses = (expense_df['debits'] - expense_df['credits']).sum()
-        net_income = total_revenue - total_expenses
-        
-        return {
-            'revenue': revenue_df,
-            'expenses': expense_df,
-            'total_revenue': total_revenue,
-            'total_expenses': total_expenses,
-            'net_income': net_income
-        }
-    
-    def generate_balance_sheet(self, as_of_date):
-        """Generate balance sheet as of specific date"""
-        trial_balance = self.generate_trial_balance(as_of_date)
-        
-        assets = trial_balance[trial_balance['account_type'] == 'Asset']
-        liabilities = trial_balance[trial_balance['account_type'] == 'Liability']
-        equity = trial_balance[trial_balance['account_type'] == 'Equity']
-        
-        total_assets = assets['balance'].sum()
-        total_liabilities = liabilities['balance'].sum()
-        total_equity = equity['balance'].sum()
-        
-        # Get current period net income for equity
-        current_year_start = f"{as_of_date[:4]}-01-01"
-        income_stmt = self.generate_income_statement(current_year_start, as_of_date)
-        retained_earnings = total_equity + income_stmt['net_income']
-        
-        return {
-            'assets': assets,
-            'liabilities': liabilities,
-            'equity': equity,
-            'total_assets': total_assets,
-            'total_liabilities': total_liabilities,
-            'retained_earnings': retained_earnings,
-            'accounting_equation': abs(total_assets - (total_liabilities + retained_earnings)) < 0.01
-        }
-    
-    def generate_cash_flow_statement(self, start_date, end_date):
-        """Generate cash flow statement"""
-        # This is a simplified version - real implementation would be more complex
-        conn = sqlite3.connect(self.db_name)
-        
-        # Cash from operating activities
-        operating_query = '''
-        SELECT 
-            coa.account_number,
-            coa.account_name,
-            SUM(CASE WHEN jel.side = 'Debit' THEN jel.amount ELSE 0 END) as cash_in,
-            SUM(CASE WHEN jel.side = 'Credit' THEN jel.amount ELSE 0 END) as cash_out
-        FROM chart_of_accounts coa
-        JOIN journal_entry_lines jel ON coa.account_id = jel.account_id
-        JOIN journal_entries je ON jel.entry_id = je.entry_id
-        WHERE coa.account_number IN ('1010', '1200', '2000')
-        AND je.entry_date BETWEEN ? AND ?
-        GROUP BY coa.account_id
-        '''
-        
-        operating_df = pd.read_sql_query(operating_query, conn, params=(start_date, end_date))
-        
-        net_cash_operating = operating_df['cash_in'].sum() - operating_df['cash_out'].sum()
-        
-        conn.close()
-        
-        return {
-            'operating_activities': operating_df,
-            'net_cash_operating': net_cash_operating,
-            'net_cash_investing': 0,  # Simplified
-            'net_cash_financing': 0,  # Simplified
-            'net_change_cash': net_cash_operating
-        }
+        except sqlite3.IntegrityError:
+            print("Error: Account number must be unique.\n")
 
-# Example usage and demonstration
-def main():
-    # Initialize the accounting system
-    accounting_system = FinancialAccountingSystem()
-    
-    # Example: Record a sales transaction
-    try:
-        accounting_system.create_journal_entry(
-            entry_date='2024-01-15',
-            description='Sale of product to customer',
-            reference='INV-001',
-            entries=[
-                ('1200', 1000.00, 'Debit', 'Accounts Receivable - Sale INV-001'),  # Debit AR
-                ('4000', 1000.00, 'Credit', 'Sales Revenue - INV-001')             # Credit Revenue
-            ]
+    def update_account(self, acc_id, acc_no, acc_name, acc_type, normal_balance, description, is_active):
+        """Update selected account"""
+        if not acc_id:
+            print("Error: Account ID must be provided.")
+            return
+        
+        # Validate required fields
+        if not acc_no or not acc_name or not acc_type or not normal_balance:
+            print("Error: Please fill in all required fields.")
+            return
+        
+        try:
+            # Update database
+            self.cursor.execute(
+                "UPDATE accounts SET acc_no=?, acc_name=?, acc_type=?, normal_balance=?, description=?, is_active=?, last_updated=CURRENT_TIMESTAMP WHERE acc_id=?",
+                (acc_no, acc_name, acc_type, normal_balance, description, 1 if is_active else 0, acc_id)
+            )
+            if self.cursor.rowcount == 0:
+                print(f"Error: No account found with ID {acc_id}.\n")
+                return
+            self.conn.commit()
+            print(f"Account '{acc_name}' updated successfully.\n")
+            
+        except sqlite3.IntegrityError:
+            print("Error: Account number must be unique.\n")
+
+    def delete_account(self, acc_id):
+        """Delete selected account"""
+        if not acc_id:
+            print("Error: Account ID must be provided.")
+            return
+        
+        # Check if account exists
+        self.cursor.execute("SELECT acc_name FROM accounts WHERE acc_id=?", (acc_id,))
+        row = self.cursor.fetchone()
+        if not row:
+            print(f"Error: No account found with ID {acc_id}.\n")
+            return
+        
+        acc_name = row[0]
+        confirm = input(f"Are you sure you want to delete account '{acc_name}'? (y/n): ").strip().lower()
+        if confirm != 'y':
+            print("Deletion cancelled.\n")
+            return
+        
+        # Delete from database
+        self.cursor.execute("DELETE FROM accounts WHERE acc_id=?", (acc_id,))
+        self.conn.commit()
+        print(f"Account '{acc_name}' deleted successfully.\n")
+
+    def search_accounts(self, search_term):
+        """Search accounts based on input and print results"""
+        search_term = search_term.strip()
+        
+        if not search_term:
+            print("Search term is empty. Listing all accounts.\n")
+            self.load_data()
+            return
+        
+        self.cursor.execute(
+            "SELECT * FROM accounts WHERE acc_no LIKE ? OR acc_name LIKE ? OR acc_type LIKE ? ORDER BY acc_no",
+            (f'%{search_term}%', f'%{search_term}%', f'%{search_term}%')
         )
-    except Exception as e:
-        print(f"Error: {e}")
-    
-    # Example: Record an expense
-    try:
-        accounting_system.create_journal_entry(
-            entry_date='2024-01-16',
-            description='Office rent payment',
-            reference='CHK-001',
-            entries=[
-                ('5200', 500.00, 'Debit', 'Rent Expense - January'),      # Debit Rent Expense
-                ('1010', 500.00, 'Credit', 'Cash payment - CHK-001')      # Credit Cash
-            ]
-        )
-    except Exception as e:
-        print(f"Error: {e}")
-    
-    # Generate financial statements
-    print("=== TRIAL BALANCE ===")
-    trial_balance = accounting_system.generate_trial_balance()
-    print(trial_balance[['account_number', 'account_name', 'balance']])
-    
-    print("\n=== INCOME STATEMENT (Jan 2024) ===")
-    income_stmt = accounting_system.generate_income_statement('2024-01-01', '2024-01-31')
-    print(f"Total Revenue: ${income_stmt['total_revenue']:.2f}")
-    print(f"Total Expenses: ${income_stmt['total_expenses']:.2f}")
-    print(f"Net Income: ${income_stmt['net_income']:.2f}")
-    
-    print("\n=== BALANCE SHEET (Jan 15, 2024) ===")
-    balance_sheet = accounting_system.generate_balance_sheet('2024-01-15')
-    print(f"Total Assets: ${balance_sheet['total_assets']:.2f}")
-    print(f"Total Liabilities: ${balance_sheet['total_liabilities']:.2f}")
-    print(f"Retained Earnings: ${balance_sheet['retained_earnings']:.2f}")
-    print(f"Accounting Equation Balanced: {balance_sheet['accounting_equation']}")
-    
-    print("\n=== CASH FLOW STATEMENT (Jan 2024) ===")
-    cash_flow = accounting_system.generate_cash_flow_statement('2024-01-01', '2024-01-31')
-    print(f"Net Cash from Operations: ${cash_flow['net_cash_operating']:.2f}")
+        
+        rows = self.cursor.fetchall()
+        
+        if not rows:
+            print("No accounts found matching the search criteria.\n")
+            return
+        
+        print(f"{'ID':<4} {'Account No':<12} {'Account Name':<20} {'Type':<10} {'Normal Balance':<15} {'Active':<7} Description")
+        print("-"*80)
+        for row in rows:
+            is_active = "Yes" if row[6] else "No"
+            description = row[5] if row[5] else ""
+            print(f"{row[0]:<4} {row[1]:<12} {row[2]:<20} {row[3]:<10} {row[4]:<15} {is_active:<7} {description}")
+        print(f"\nFound {len(rows)} accounts.\n")
+
+    def run_terminal_interface(self):
+        while True:
+            print("Accounting Dashboard")
+            print("1. Add Account")
+            print("2. Update Account")
+            print("3. Delete Account")
+            print("4. List Accounts")
+            print("5. Search Accounts")
+            print("6. Exit")
+            choice = input("Enter your choice (1-6): ").strip()
+            
+            if choice == '1':
+                print("\nAdd Account:")
+                acc_no = input("Account No: ").strip()
+                acc_name = input("Account Name: ").strip()
+                acc_type = input("Account Type (Asset, Liability, Equity, Revenue, Expense): ").strip()
+                normal_balance = input("Normal Balance (Debit, Credit): ").strip()
+                description = input("Description (optional): ").strip()
+                is_active_input = input("Is Active? (y/n, default y): ").strip().lower()
+                is_active = True if is_active_input in ('', 'y', 'yes') else False
+                self.add_account(acc_no, acc_name, acc_type, normal_balance, description, is_active)
+
+            elif choice == '2':
+                print("\nUpdate Account:")
+                try:
+                    acc_id = int(input("Account ID to update: ").strip())
+                except ValueError:
+                    print("Invalid ID.\n")
+                    continue
+                acc_no = input("New Account No: ").strip()
+                acc_name = input("New Account Name: ").strip()
+                acc_type = input("New Account Type (Asset, Liability, Equity, Revenue, Expense): ").strip()
+                normal_balance = input("New Normal Balance (Debit, Credit): ").strip()
+                description = input("New Description (optional): ").strip()
+                is_active_input = input("Is Active? (y/n, default y): ").strip().lower()
+                is_active = True if is_active_input in ('', 'y', 'yes') else False
+                self.update_account(acc_id, acc_no, acc_name, acc_type, normal_balance, description, is_active)
+
+            elif choice == '3':
+                print("\nDelete Account:")
+                try:
+                    acc_id = int(input("Account ID to delete: ").strip())
+                except ValueError:
+                    print("Invalid ID.\n")
+                    continue
+                self.delete_account(acc_id)
+
+            elif choice == '4':
+                print("\nList Accounts:")
+                self.load_data()
+
+            elif choice == '5':
+                print("\nSearch Accounts:")
+                search_term = input("Enter search term: ").strip()
+                self.search_accounts(search_term)
+
+            elif choice == '6':
+                print("Exiting. Goodbye!")
+                break
+
+            else:
+                print("Invalid choice. Please enter a number between 1 and 6.\n")
+
+    def __del__(self):
+        """Close database connection when object is destroyed"""
+        if hasattr(self, 'conn'):
+            self.conn.close()
 
 if __name__ == "__main__":
-    main()
+    app = AccountingDashboard()
+    app.run_terminal_interface()
