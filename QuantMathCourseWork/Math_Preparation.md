@@ -1,5 +1,5 @@
 📚 Master Syllabus: Quant Finance & AI/ML Mathematics
-
+All the Questions are for practice and are generated, hope tyey help.
 ⸻
 
 1. Linear Algebra
