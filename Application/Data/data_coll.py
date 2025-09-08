@@ -2,7 +2,6 @@ import os
 import pandas as pd
 from nsepython import nsefetch
 
-
 def get_historical_data(symbol: str,index_type:str, series: str, start_date: str, end_date: str, save_folder: str):
 
     # NSE API for historical data
@@ -10,26 +9,32 @@ def get_historical_data(symbol: str,index_type:str, series: str, start_date: str
     url_indices = f"https://www.nseindia.com/api/historical/indicesHistory?indexType={index_type}&from={start_date}&to={end_date}"
 
     # Fetch data
-    if series == "EQ":
+    if series=="EQ":
         url = url_equity
     else:
         url = url_indices
     data = nsefetch(url)
 
-    # Safe check for 'data' field before creating DataFrame
-    if isinstance(data, dict) and 'data' in data:
+    if series=="EQ":
         df = pd.DataFrame(data['data'])
     else:
-        print(f"No 'data' field in response for symbol: {symbol}, series: {series}.")
-        return
+        df_turnover = pd.DataFrame(data['data'].get('indexTurnoverRecords', []))
+        df_close = pd.DataFrame(data['data'].get('indexCloseOnlineRecords', []))
 
-    if df.empty:
+
+    if (series == "EQ" and df.empty) or (series != "EQ" and (df_turnover.empty or df_close.empty)):
         print("No data found. Please check symbol, series, or date range.")
         return
 
     # Select useful columns
-    df = df[['CH_TIMESTAMP','CH_OPENING_PRICE','CH_TRADE_HIGH_PRICE',
-             'CH_TRADE_LOW_PRICE','CH_CLOSING_PRICE','CH_TOT_TRADED_QTY']]
+    if series=="EQ":
+        df = df[['CH_TIMESTAMP','CH_OPENING_PRICE','CH_TRADE_HIGH_PRICE',
+                'CH_TRADE_LOW_PRICE','CH_CLOSING_PRICE','CH_TOT_TRADED_QTY']]
+    elif series=="":
+        df = pd.concat([df_turnover, df_close], axis=1)
+        df = df[['EOD_TIMESTAMP', 'EOD_OPEN_INDEX_VAL', 'EOD_HIGH_INDEX_VAL',
+             'EOD_LOW_INDEX_VAL', 'EOD_CLOSE_INDEX_VAL', 'HIT_TRADED_QTY']] 
+
 
     # Rename columns
     df.columns = ['Date','Open','High','Low','Close','Volume']
@@ -38,7 +43,10 @@ def get_historical_data(symbol: str,index_type:str, series: str, start_date: str
     os.makedirs(save_folder, exist_ok=True)
 
     # File path
-    file_path = os.path.join(save_folder, f"{symbol}_history.parquet")
+    if series == "EQ":
+        file_path = os.path.join(save_folder, f"{symbol}_history.parquet")
+    else:
+        file_path = os.path.join(save_folder, f"{index_type}_history.parquet")
 
     # Save as parquet
     df.to_parquet(file_path, index=False)
@@ -47,13 +55,3 @@ def get_historical_data(symbol: str,index_type:str, series: str, start_date: str
 
 
 
-
-df = pd.read_parquet("/Users/vanshaj/Work/GitHub/Quant_Labs/Application/Data/top50_indian_stocks.parquet", engine="pyarrow")
-symbols = df["Symbol"].tolist()
-for symbol in symbols:
-    series = "EQ"
-    start_date = "01-01-2025"
-    end_date = "31-03-2025"
-    save_folder = "/Users/vanshaj/Work/GitHub/Quant_Labs/Application/Data/Assets Data"   # Change this folder name if needed
-
-    get_historical_data(symbol, "", series, start_date, end_date, save_folder)
