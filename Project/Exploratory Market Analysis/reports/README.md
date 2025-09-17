@@ -14,12 +14,17 @@ The analysis will compare the performance of Indian assets against their foreign
 
 ## Asset Class Comparison Matrix
 
-| Class | Sector/Type | Indian Asset 1 | Indian Asset 2 | Foreign Asset (Benchmark) | Country
-| :--- | :--- | :--- | :--- | :--- |
-| **Equity** | Telecom | Bharti Airtel | Reliance Jio | China Mobile |
-| **Index Fund** | Broad Market ETF | NIFTY 50 | NIFTY BANK | S&P 500 |
-| **Bonds** | Government | 10-Yr G-Sec | SDL (State Govt Bond) | 10-Yr US Treasury |
-| **Commodity** | Bullion | Gold (MCX) | Silver (MCX) | Gold (COMEX) |
+| Class             | Sector/Type       | Indian Asset 1    | Indian Asset 2         | Foreign Asset (Benchmark)
+
+| :---              | :---              | :---              | :---                   | :--- |
+
+| **Equity**        | Telecom           | Bharti Airtel     | Reliance Jio           | Verizon |
+
+| **Index Fund**    | Broad Market ETF  | NIFTY 50          | NIFTY BANK             | S&P 500 |
+
+| **Bonds**         | Government        | 10-Yr G-Sec       | SDL (State Govt Bond)  | 10-Yr US Treasury |
+
+| **Commodity**     | Bullion           | Gold (MCX)        | Silver (MCX)           | Gold (COMEX) |
 
 ---
 
