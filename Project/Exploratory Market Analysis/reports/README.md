@@ -18,7 +18,7 @@ The analysis will compare the performance of Indian assets against their foreign
 
 | :---              | :---              | :---              | :---                   | :--- |
 
-| **Equity**        | Airline           | Air India         | IndiGo                 | Qatar |
+| **Equity**        | Telecom           | Bharti Airtel     | Vodafone Idea          | Verizon |
 
 | **Index Fund**    | Broad Market ETF  | NIFTY 50          | NIFTY BANK             | S&P 500 |
 
