@@ -22,7 +22,7 @@ The analysis will compare the performance of Indian assets against their foreign
 
 | **Index Fund**    | Broad Market ETF  | NIFTY 50          | NIFTY BANK             | S&P 500 |
 
-| **Bonds**         | Government        | 10-Yr G-Sec       | SDL (State Govt Bond)  | 10-Yr US Treasury |
+| **Bonds**         | Government        | 10-Yr G-Sec       | 5-Yr G-Sec             | 10-Yr US Treasury |
 
 | **Commodity**     | Bullion           | Gold (MCX)        | Silver (MCX)           | Gold (COMEX) |
 
