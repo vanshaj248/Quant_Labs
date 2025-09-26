@@ -85,3 +85,9 @@ def get_yahoo_finance_data_indices():
         df = yf.download(symbol, start="2024-01-01", end="2025-01-01")
         data = pd.DataFrame(df)
         data.to_parquet(f"/Users/vanshaj/Work/GitHub/Quant_Labs/Application/Data/Assets Data/EQUITY/USA/{equity}_history.parquet", index=False)
+
+
+ind = pd.read_parquet("/Users/vanshaj/Work/GitHub/Quant_Labs/Application/Data/India50_stocks.parquet", engine="pyarrow")
+sym_ind = ind["Symbol"].tolist()    
+for sym in sym_ind:
+    get_equity_historical_data(sym, "EQ", "01-04-2024", "31-03-2025", "/Users/vanshaj/Work/GitHub/Quant_Labs/Application/Data/Assets Data/EQUITY/INDIA")
