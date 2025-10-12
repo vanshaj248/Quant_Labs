@@ -90,4 +90,4 @@ def get_yahoo_finance_data_indices():
 ind = pd.read_parquet("/Users/vanshaj/Work/GitHub/Quant_Labs/Application/Data/India50_stocks.parquet", engine="pyarrow")
 sym_ind = ind["Symbol"].tolist()    
 for sym in sym_ind:
-    get_equity_historical_data(sym, "EQ", "01-04-2024", "31-03-2025", "/Users/vanshaj/Work/GitHub/Quant_Labs/Application/Data/Assets Data/EQUITY/INDIA")
+    get_equity_historical_data(sym, "EQ", "01-01-2025", "31-03-2025", "/Users/vanshaj/Work/GitHub/Quant_Labs/Application/Data/Assets Data/EQUITY/INDIA")
