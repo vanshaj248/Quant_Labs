@@ -1,192 +1,276 @@
-# Finance Study Course
-Here’s your complete syllabus for Quantitative Finance tailored to your career goals (Risk Manager, Portfolio Manager, Quantitative Consultant, etc.). This is a full-fledged academic-style syllabus covering every essential topic in finance and quantitative modeling — structured like a university curriculum with:
-	•	📘 1 Best Book
-	•	🎓 1 Best Course
-	•	🧠 All major topics + necessary sub-topics
+# Quantitative Finance Roadmap
+### July 2026 – March 2027 · 9 Months · 10 Modules + 2 Projects
 
-⸻
+---
 
-🧾 MASTER SYLLABUS FOR QUANTITATIVE FINANCE
+## Overview
 
-(Designed for a STEM student with no finance background)
-Duration: July 2025 – June 2026 (3rd Year Roadmap)
-Total Modules: 10
+| Detail | Info |
+|---|---|
+| **Duration** | July 2026 – March 2027 (9 months) |
+| **Total Modules** | 10 Core Modules + 2 Projects |
+| **Target Roles** | Risk Manager, Portfolio Manager, Quantitative Consultant |
+| **Background** | Designed for STEM students with no prior finance background |
 
-📍 Module 1: Fundamentals of Finance
+---
 
-Goal: Understand the basics of finance, instruments, markets, and time value of money
+## Phases at a Glance
 
-🔹 Topics & Subtopics:
-	•	Financial systems, institutions, and markets
-	•	Time value of money (NPV, IRR)
-	•	Discounting and compounding
-	•	Bonds, stocks, mutual funds, ETFs
-	•	Capital structure and cost of capital
-	•	Corporate valuation and dividend policies
+| Phase | Period | Focus |
+|---|---|---|
+| **Phase 1 · Foundation** | July – August 2026 | Finance basics, accounting, valuation |
+| **Phase 2 · Core Quant** | September – November 2026 | Math, Python, investments, portfolio theory |
+| **Phase 3 · Advanced** | December 2026 – March 2027 | Derivatives, risk, fixed income, quant strategies |
 
-📘 Book: “Principles of Corporate Finance” – Richard Brealey & Stewart Myers
-🎓 Course: Introduction to Corporate Finance – Wharton, Coursera
+---
 
-⸻
+## Phase 1 · Foundation
+> *Build the financial intuition before diving into quantitative methods.*
 
-📍 Module 2: Financial Accounting & Statement Analysis
+---
 
-Goal: Learn to read, interpret, and analyze financial statements
+### M1 · Finance Fundamentals
+**Month:** July 2026 · **Duration:** 4 weeks
 
-🔹 Topics:
-	•	Balance sheet, Income statement, Cash flow
-	•	Financial ratios (liquidity, profitability, leverage)
-	•	Common-size analysis
-	•	Earnings quality and red flags
-	•	Valuation multiples (P/E, EV/EBITDA)
+**Goal:** Understand the basics of finance, instruments, markets, and time value of money.
 
-📘 Book: “Financial Statement Analysis” – Martin Fridson
-🎓 Course: Financial Accounting – University of Illinois (Coursera)
+**Topics:**
+- Financial systems, institutions, and markets
+- Time value of money (NPV, IRR)
+- Discounting and compounding
+- Bonds, stocks, mutual funds, ETFs
+- Capital structure and cost of capital
+- Corporate valuation and dividend policies
 
-⸻
+**📘 Book:** *Principles of Corporate Finance* – Richard Brealey & Stewart Myers
 
-📍 Module 3: Quantitative Methods for Finance
+---
 
-Goal: Build math skills for modeling, risk, and asset pricing
+### M2 · Financial Accounting & Statement Analysis
+**Month:** August 2026 · **Duration:** 4 weeks
 
-🔹 Topics:
-	•	Linear algebra (matrices, eigenvalues, decomposition)
-	•	Probability and distributions (normal, binomial, lognormal)
-	•	Statistical inference (t-tests, p-values, confidence intervals)
-	•	Time series (AR, MA, ARIMA)
-	•	Optimization (Lagrange, convex programming)
+**Goal:** Learn to read, interpret, and analyze financial statements.
 
-📘 Book: “Mathematics for Economists” – Simon & Blume
-🎓 Course: Mathematics for Machine Learning – Imperial College (Coursera)
+**Topics:**
+- Balance sheet, income statement, cash flow
+- Financial ratios (liquidity, profitability, leverage)
+- Common-size analysis
+- Earnings quality and red flags
+- Valuation multiples (P/E, EV/EBITDA)
 
-⸻
+**📘 Book:** *Financial Statement Analysis* – Martin Fridson
 
-📍 Module 4: Investments & Asset Pricing
+---
 
-Goal: Understand how assets are priced and how to evaluate returns
+## Phase 2 · Core Quant
+> *Build the mathematical toolkit and apply it in Python alongside investment theory.*
 
-🔹 Topics:
-	•	CAPM, APT, Fama-French factors
-	•	Efficient Market Hypothesis (EMH)
-	•	Risk and return
-	•	Sharpe, Treynor, Sortino ratios
-	•	Behavioral finance overview
+---
 
-📘 Book: “Investments” – Bodie, Kane, Marcus
-🎓 Course: Investment Management – University of Geneva (Coursera)
+### M3 · Quantitative Methods for Finance
+**Month:** September 2026 · **Duration:** 4 weeks
 
-⸻
+**Goal:** Build math skills for modeling, risk, and asset pricing.
 
-📍 Module 5: Portfolio Theory and Construction
+**Topics:**
+- Linear algebra (matrices, eigenvalues, decomposition)
+- Probability and distributions (normal, binomial, lognormal)
+- Statistical inference (t-tests, p-values, confidence intervals)
+- Time series analysis (AR, MA, ARIMA)
+- Optimization (Lagrange, convex programming)
 
-Goal: Build optimal portfolios based on risk-return tradeoffs
+**📘 Book:** *Mathematics for Economists* – Simon & Blume
 
-🔹 Topics:
-	•	Mean-variance optimization
-	•	Efficient frontier
-	•	Capital Market Line (CML), Security Market Line (SML)
-	•	Factor models and alpha/beta separation
-	•	Portfolio rebalancing and attribution
+---
 
-📘 Book: “Quantitative Investment Analysis” – CFA Institute
-🎓 Course: Portfolio and Risk Management – Coursera (University of Geneva)
+### M9 · Python for Quantitative Finance *(Parallel Track)*
+**Month:** September – October 2026 · **Duration:** Ongoing parallel track
 
-⸻
+**Goal:** Apply programming to finance problems and automate analysis.
 
-📍 Module 6: Derivatives and Financial Engineering
+> 💡 *Run this track alongside M3–M5 to implement every concept you learn in code.*
 
-Goal: Understand and model derivatives like options, futures, and swaps
+**Topics:**
+- Data handling with Pandas and NumPy
+- Financial APIs (yfinance, Alpha Vantage)
+- Portfolio optimization with CVXPY
+- Backtesting strategies (bt, Pyfolio)
+- Web dashboards with Streamlit
 
-🔹 Topics:
-	•	Futures, Forwards, Options, Swaps
-	•	Arbitrage and hedging
-	•	Binomial model
-	•	Black-Scholes-Merton model
-	•	Greeks: Delta, Gamma, Vega, Theta
-	•	Exotic options
+**📘 Book:** *Python for Finance* – Yves Hilpisch
 
-📘 Book: “Options, Futures and Other Derivatives” – John C. Hull
-🎓 Course: Financial Engineering and Risk Management – Columbia (Coursera)
+---
 
-⸻
+### M4 · Investments & Asset Pricing
+**Month:** October 2026 · **Duration:** 4 weeks
 
-📍 Module 7: Risk Management
+**Goal:** Understand how assets are priced and how to evaluate returns.
 
-Goal: Manage and measure financial risks
+**Topics:**
+- CAPM, APT, Fama-French three-factor model
+- Efficient Market Hypothesis (EMH)
+- Risk and return framework
+- Sharpe, Treynor, and Sortino ratios
+- Behavioral finance overview
 
-🔹 Topics:
-	•	Types of risks: market, credit, operational, liquidity
-	•	Value at Risk (VaR), CVaR
-	•	Stress testing, scenario analysis
-	•	Credit scoring, PD/LGD modeling
-	•	Basel II/III, regulatory frameworks
+**📘 Book:** *Investments* – Bodie, Kane & Marcus
 
-📘 Book: “Risk Management and Financial Institutions” – John Hull
-🎓 Course: Risk Management in Banking and Financial Markets – edX, IIMB
+---
 
-⸻
+### M5 · Portfolio Theory & Construction
+**Month:** November 2026 · **Duration:** 4 weeks
 
-📍 Module 8: Fixed Income & Credit Analytics
+**Goal:** Build optimal portfolios based on risk-return tradeoffs.
 
-Goal: Analyze bond markets, interest rates, and credit risk
+**Topics:**
+- Mean-variance optimization
+- Efficient frontier construction
+- Capital Market Line (CML) and Security Market Line (SML)
+- Factor models and alpha/beta separation
+- Portfolio rebalancing and performance attribution
 
-🔹 Topics:
-	•	Bond pricing, YTM, duration, convexity
-	•	Term structure of interest rates
-	•	Spot and forward rates
-	•	Credit risk models (structural vs. reduced-form)
-	•	Securitization, MBS, ABS
+**📘 Book:** *Quantitative Investment Analysis* – CFA Institute
 
-📘 Book: “Fixed Income Securities” – Bruce Tuckman & Angel Serrat
-🎓 Course: Bond and Credit Markets – NYIF on edX
+---
 
-⸻
+### 🎯 Mini Project P1 · Portfolio Optimizer
+**Month:** November 2026 · **Duration:** 2 weeks (alongside M5)
 
-📍 Module 9: Python Programming for Quant Finance
+**Goal:** Build and backtest a 10-stock portfolio using everything from M3–M5.
 
-Goal: Apply programming to finance problems and automate analysis
+**Tasks:**
+- Pull historical data via yfinance
+- Run mean-variance optimization using CVXPY
+- Plot the efficient frontier
+- Compute Sharpe, Sortino, and max drawdown
+- Compare performance vs benchmark (e.g. Nifty 50 / S&P 500)
 
-🔹 Topics:
-	•	Data handling with Pandas, NumPy
-	•	Financial APIs (yfinance, Alpha Vantage)
-	•	Portfolio optimization (CVXPY)
-	•	Backtesting strategies (bt, Pyfolio)
-	•	Web dashboards (Streamlit)
+**✅ Deliverable:** Jupyter notebook with efficient frontier plot and full performance report.
 
-📘 Book: “Python for Finance” – Yves Hilpisch
-🎓 Course: Python and Statistics for Financial Analysis – Coursera
+---
 
-⸻
+## Phase 3 · Advanced
+> *Master derivatives, risk frameworks, fixed income, and systematic strategy development.*
 
-📍 Module 10: Quantitative Research and Strategy Development
+---
 
-Goal: Build systematic strategies and do quantitative alpha research
+### M6 · Derivatives & Financial Engineering
+**Month:** December 2026 · **Duration:** 4 weeks
 
-🔹 Topics:
-	•	Statistical arbitrage
-	•	Momentum and mean reversion
-	•	Smart beta and factor investing
-	•	Machine learning in finance
-	•	Backtesting pitfalls and performance evaluation
+**Goal:** Understand and model derivatives — options, futures, and swaps.
 
-📘 Book: “Advances in Financial Machine Learning” – Marcos López de Prado
-🎓 Course: AI for Trading – Udacity (Free via GitHub Student)
+**Topics:**
+- Futures, forwards, options, and swaps
+- Arbitrage and hedging strategies
+- Binomial option pricing model
+- Black-Scholes-Merton (BSM) model
+- Greeks: Delta, Gamma, Vega, Theta
+- Introduction to exotic options
 
-⸻
+**📘 Book:** *Options, Futures and Other Derivatives* – John C. Hull
 
-🎒 Optional Bonus Topics (Advanced or Specialized)
+---
 
-Area	Book	Course
-ESG & Sustainable Finance	Principles of Sustainable Finance	Sustainable Finance – edX, SDG Academy
-Financial Econometrics	Intro to Econometrics – Stock & Watson	Financial Econometrics – Coursera
-FinTech	The FINTECH Book	FinTech – University of Michigan
+### M7 · Risk Management
+**Month:** January 2027 · **Duration:** 4 weeks
 
+**Goal:** Measure and manage financial risks across market, credit, and operational dimensions.
 
-⸻
+**Topics:**
+- Types of risk: market, credit, operational, liquidity
+- Value at Risk (VaR) and Conditional VaR (CVaR)
+- Stress testing and scenario analysis
+- Credit scoring and PD/LGD modeling
+- Basel II/III regulatory frameworks
 
-🧠 Additional Practice Materials
-	•	Interview Prep Book: “Heard on the Street” by Timothy Crack
-	•	Case Study Book: “Cases in Finance” – Bruner et al.
-	•	Practice Platform: QuantConnect, Kaggle
+**📘 Book:** *Risk Management and Financial Institutions* – John C. Hull
 
-⸻
+---
+
+### M8 · Fixed Income & Credit Analytics
+**Month:** February 2027 · **Duration:** 4 weeks
+
+**Goal:** Analyze bond markets, interest rate dynamics, and credit risk models.
+
+**Topics:**
+- Bond pricing, yield to maturity (YTM), duration, convexity
+- Term structure of interest rates
+- Spot rates and forward rates
+- Credit risk models: structural vs reduced-form
+- Securitization, MBS, and ABS
+
+**📘 Book:** *Fixed Income Securities* – Bruce Tuckman & Angel Serrat
+
+---
+
+### M10 · Quantitative Research & Strategy Development
+**Month:** February – March 2027 · **Duration:** 4 weeks
+
+**Goal:** Build systematic investment strategies and conduct quantitative alpha research.
+
+**Topics:**
+- Statistical arbitrage
+- Momentum and mean-reversion strategies
+- Smart beta and factor investing
+- Machine learning applications in finance
+- Backtesting pitfalls and performance evaluation
+
+**📘 Book:** *Advances in Financial Machine Learning* – Marcos López de Prado
+
+---
+
+### 🎯 Capstone Project P2 · Systematic Quant Strategy
+**Month:** March 2027 · **Duration:** 3 weeks
+
+**Goal:** Build a complete, end-to-end systematic trading strategy with rigorous risk management.
+
+**Tasks:**
+- Construct a multi-factor model (value, momentum, quality)
+- Generate and test alpha signals
+- Run risk-adjusted backtesting with walk-forward validation
+- Report Sharpe ratio, max drawdown, Calmar ratio, and turnover
+- Write a 5-page research brief in the style of a quant research paper
+
+**✅ Deliverable:** Live-data strategy pipeline + risk dashboard + research brief.
+
+---
+
+## Month-by-Month Schedule
+
+| Month | Module(s) | Phase |
+|---|---|---|
+| July 2026 | M1 · Finance Fundamentals | Foundation |
+| August 2026 | M2 · Financial Accounting | Foundation |
+| September 2026 | M3 · Quantitative Methods + M9 Python (start) | Core Quant |
+| October 2026 | M4 · Investments & Asset Pricing + M9 Python (cont.) | Core Quant |
+| November 2026 | M5 · Portfolio Theory + P1 Mini Project | Core Quant |
+| December 2026 | M6 · Derivatives & Financial Engineering | Advanced |
+| January 2027 | M7 · Risk Management | Advanced |
+| February 2027 | M8 · Fixed Income + M10 Quant Research (start) | Advanced |
+| March 2027 | M10 · Quant Research (cont.) + P2 Capstone | Advanced |
+
+---
+
+## Bonus Topics (Optional / Post-March)
+
+| Area | Book | Platform |
+|---|---|---|
+| ESG & Sustainable Finance | *Principles of Sustainable Finance* | edX – SDG Academy |
+| Financial Econometrics | *Intro to Econometrics* – Stock & Watson | Coursera |
+| FinTech | *The FINTECH Book* | University of Michigan |
+
+---
+
+## Practice & Interview Prep
+
+| Resource | Type |
+|---|---|
+| *Heard on the Street* – Timothy Crack | Interview prep book |
+| *Cases in Finance* – Bruner et al. | Case study book |
+| QuantConnect | Strategy backtesting platform |
+| Kaggle (Finance datasets) | Data practice |
+| LeetCode / HackerRank | Quant coding challenges |
+
+---
+
+*Roadmap last updated: May 2026*
