@@ -1,22 +1,21 @@
 """
-DCF Valuation TUI Application
-Interactive terminal interface for company valuation analysis
+Interactive TUI for company data exploration and valuation
+Built with textual framework - Complete rewrite
 """
 
-from textual.app import App, ComposeResult, on
-from textual.containers import Container, Vertical, Horizontal
-from textual.widgets import Header, Footer, Static, Button, Select, DataTable, Label, Input
-from textual.screen import Screen
+from textual.app import App, ComposeResult
+from textual.containers import Container, Vertical, Horizontal, ScrollableContainer
+from textual.widgets import Header, Footer, Static, Button, Label, DataTable
 from textual.binding import Binding
-from src.database.init_db import CompanyDatabase, init_default_companies
-from src.valuation.dcf import DCFCalculator, DCFValuation
-from src.valuation.wacc import WACCCalculator
-from src.ingestion.ingestion import FinancialDataIngestion, load_api_key_from_env
-from datetime import datetime
+from textual.screen import Screen
+import pandas as pd
+
+from src.database.company_db import CompanyDatabase
+from src.ingestion.ingestion import DataIngestionPipeline
 
 
-class CompanySelector(Screen):
-    """Screen to select a company for valuation."""
+class CompanyListScreen(Screen):
+    """Screen to select a company."""
     
     BINDINGS = [
         Binding("q", "quit", "Quit"),
@@ -25,153 +24,190 @@ class CompanySelector(Screen):
     
     def __init__(self):
         super().__init__()
-        self.db = CompanyDatabase()
-        self.selected_ticker = None
+        self.companies = [
+            "AAPL", "MSFT", "GOOGL", "AMZN", "NVDA",
+            "META", "TSLA", "BRK.B", "JPM", "V"
+        ]
     
     def compose(self) -> ComposeResult:
-        yield Header()
-        with Container():
-            yield Label("📊 DCF Valuation Analysis")
-            yield Label("Select a company to analyze:")
-            
-            # Get companies from database
-            companies = self.db.get_all_companies()
-            company_options = [(str(c[0]), str(c[0])) for c in companies]
-            
-            if not company_options:
-                yield Label("⚠️ No companies in database. Initializing...")
-                init_default_companies()
-                companies = self.db.get_all_companies()
-                company_options = [(str(c[0]), str(c[0])) for c in companies]
-            
-            yield Select(
-                company_options,
-                id="company_select",
-                prompt="Choose a company:"
-            )
-            
-            with Horizontal():
-                yield Button("Analyze", id="analyze_btn", variant="primary")
-                yield Button("Ingest Data", id="ingest_btn")
-                yield Button("Quit", id="quit_btn")
-        
+        yield Header(show_clock=True)
+        with Container(id="main_container"):
+            yield Label("📊 DCF Valuation Analyzer", id="title")
+            yield Label("Select a company to analyze:", id="subtitle")
+            yield DataTable(id="company_list")
+            with Horizontal(id="button_row"):
+                yield Button("View Data", id="view_btn", variant="primary")
+                yield Button("Ingest", id="ingest_btn")
+                yield Button("Quit", id="quit_btn", variant="error")
         yield Footer()
     
-    @on(Button.Pressed, "#analyze_btn")
-    def on_analyze(self):
-        """Handle analyze button press."""
-        select = self.query_one("#company_select", Select)
-        if select.value != Select.BLANK:
-            self.selected_ticker = select.value
-            self.app.push_screen(ValuationScreen(self.selected_ticker))
-    
-    @on(Button.Pressed, "#ingest_btn")
-    def on_ingest(self):
-        """Handle data ingestion."""
-        api_key = load_api_key_from_env()
-        if not api_key:
-            self.notify("❌ API key not found in .env", timeout=3)
-            return
+    def on_mount(self):
+        """Populate company list."""
+        table = self.query_one("#company_list", DataTable)
+        table.add_column("Ticker", key="ticker", width=10)
+        table.add_column("Status", key="status", width=15)
+        table.add_column("Price", key="price", width=15)
         
-        ingestion = FinancialDataIngestion(api_key)
-        companies = ["AAPL", "MSFT", "GOOGL"]
-        ingestion.ingest_multiple(companies)
-        ingestion.close()
-        self.notify("✓ Data ingestion complete", timeout=3)
+        for ticker in self.companies:
+            db = CompanyDatabase(ticker)
+            price = db.get_current_price()
+            status = "✓ Data" if price else "○ Empty"
+            table.add_row(ticker, status, f"${price:.2f}" if price else "N/A")
+            db.close()
     
-    @on(Button.Pressed, "#quit_btn")
-    def on_quit(self):
-        """Quit application."""
-        self.app.exit()
+    def on_button_pressed(self, event: Button.Pressed) -> None:
+        """Handle button presses."""
+        table = self.query_one("#company_list", DataTable)
+        
+        if event.button.id == "view_btn":
+            self.action_select_company()
+        elif event.button.id == "ingest_btn":
+            if table.cursor_row is not None:
+                row = table.get_row_at(table.cursor_row)
+                self.app.push_screen(IngestionScreen(str(row[0])))
+        elif event.button.id == "quit_btn":
+            self.app.exit()
+    
+    def action_select_company(self):
+        """Select the current company."""
+        table = self.query_one("#company_list", DataTable)
+        if table.cursor_row is not None:
+            row = table.get_row_at(table.cursor_row)
+            self.app.push_screen(CompanyDataScreen(str(row[0])))
     
     def action_quit(self):
         self.app.exit()
-    
-    def action_select_company(self):
-        self.on_analyze()
 
 
-class ValuationScreen(Screen):
-    """Screen displaying DCF valuation for selected company."""
+class IngestionScreen(Screen):
+    """Screen to ingest data for a company."""
     
     BINDINGS = [
         Binding("q", "back", "Back"),
-        Binding("r", "refresh", "Refresh"),
     ]
     
     def __init__(self, ticker: str):
         super().__init__()
-        self.ticker = ticker.upper()
-        self.db = CompanyDatabase()
+        self.ticker = ticker
     
     def compose(self) -> ComposeResult:
         yield Header()
         with Container():
-            yield Label(f"📈 DCF Valuation - {self.ticker}")
-            
-            # Valuation summary
-            with Vertical(id="valuation_summary"):
-                yield Label("Loading valuation data...")
-            
-            # Key metrics table
-            with Vertical(id="metrics_table"):
-                yield Label("Financial Metrics:")
-                yield DataTable(id="metrics_table_widget")
-            
-            # DCF breakdown
-            with Vertical(id="dcf_breakdown"):
-                yield Label("DCF Calculation Breakdown:")
-                yield DataTable(id="dcf_table_widget")
-            
+            yield Label(f"📥 Ingesting Data for {self.ticker}", id="title")
+            yield Static("", id="log_display")
             with Horizontal():
-                yield Button("Sensitivity Analysis", id="sensitivity_btn")
-                yield Button("Export Report", id="export_btn")
                 yield Button("Back", id="back_btn", variant="primary")
-        
         yield Footer()
     
     def on_mount(self):
-        """Load and display valuation data."""
-        self.load_valuation_data()
-    
-    def load_valuation_data(self):
-        """Load valuation from database or calculate."""
-        valuation = self.db.get_latest_valuation(self.ticker)
+        """Run ingestion."""
+        log = self.query_one("#log_display", Static)
+        log.update(f"Ingesting {self.ticker}...\n\n")
         
-        if valuation:
-            self.display_valuation(valuation)
-        else:
-            self.notify(f"No valuation found for {self.ticker}. Run ingestion first.", timeout=5)
-    
-    def display_valuation(self, valuation):
-        """Display valuation results."""
         try:
-            summary_widget = self.query_one("#valuation_summary", Vertical)
-            summary_widget.children = [
-                Label(f"{'='*60}"),
-                Label(f"Current Price: ${valuation[2]:.2f}" if valuation[2] else "N/A"),
-                Label(f"Intrinsic Value: ${valuation[17]:.2f}" if valuation[17] else "N/A"),
-                Label(f"Margin of Safety: {valuation[18]*100:.1f}%" if valuation[18] else "N/A"),
-                Label(f"Recommendation: {valuation[19]}" if valuation[19] else "HOLD"),
-                Label(f"{'='*60}"),
-            ]
+            pipeline = DataIngestionPipeline()
+            pipeline.ingest_company(self.ticker, fetch_market=True, fetch_financials=True)
+            log.update(f"✓ Ingestion of {self.ticker} complete!")
         except Exception as e:
-            self.notify(f"Error displaying valuation: {e}", timeout=3)
+            log.update(f"❌ Error: {e}")
     
-    @on(Button.Pressed, "#back_btn")
-    def on_back(self):
-        """Go back to company selector."""
-        self.app.pop_screen()
+    def on_button_pressed(self, event: Button.Pressed) -> None:
+        if event.button.id == "back_btn":
+            self.app.pop_screen()
     
     def action_back(self):
-        self.on_back()
+        self.app.pop_screen()
+
+
+class CompanyDataScreen(Screen):
+    """Screen displaying company data."""
     
-    def action_refresh(self):
-        self.load_valuation_data()
+    BINDINGS = [
+        Binding("q", "back", "Back"),
+    ]
+    
+    def __init__(self, ticker: str):
+        super().__init__()
+        self.ticker = ticker
+        self.db = CompanyDatabase(ticker)
+    
+    def compose(self) -> ComposeResult:
+        yield Header()
+        with Container():
+            yield Label(f"📈 {self.ticker} - Data", id="title")
+            
+            # Market data
+            with Vertical(id="market_section"):
+                yield Label("Latest Quote:", id="quote_label")
+                yield DataTable(id="market_table")
+            
+            # Financials
+            with Vertical(id="financials_section"):
+                yield Label("Financials (Annual):", id="fin_label")
+                yield DataTable(id="financials_table")
+            
+            # Buttons
+            with Horizontal():
+                yield Button("Back", id="back_btn", variant="primary")
+        yield Footer()
+    
+    def on_mount(self):
+        """Load data."""
+        self.load_market_data()
+        self.load_financials()
+    
+    def load_market_data(self):
+        """Load market data."""
+        table = self.query_one("#market_table", DataTable)
+        table.add_column("Metric", key="metric")
+        table.add_column("Value", key="value")
+        
+        try:
+            df = self.db.get_market_data(limit=1)
+            if not df.empty:
+                row = df.iloc[-1]
+                table.add_row("Timestamp", str(row['timestamp'])[:10])
+                table.add_row("Open", f"${row['open']:.2f}")
+                table.add_row("High", f"${row['high']:.2f}")
+                table.add_row("Low", f"${row['low']:.2f}")
+                table.add_row("Close", f"${row['close']:.2f}")
+                table.add_row("Volume", f"{int(row['volume']):,}")
+        except Exception as e:
+            self.query_one("#quote_label").update(f"Error: {e}")
+    
+    def load_financials(self):
+        """Load financials."""
+        table = self.query_one("#financials_table", DataTable)
+        table.add_column("Year", key="year", width=10)
+        table.add_column("Revenue (B)", key="rev", width=15)
+        table.add_column("Net Income (B)", key="ni", width=15)
+        table.add_column("FCF (B)", key="fcf", width=15)
+        
+        try:
+            df = self.db.get_latest_financials(years=5)
+            if not df.empty:
+                for _, row in df.iterrows():
+                    table.add_row(
+                        str(int(row['fiscal_year'])),
+                        f"${row['revenue']/1e9:.1f}" if row['revenue'] else "N/A",
+                        f"${row['net_income']/1e9:.1f}" if row['net_income'] else "N/A",
+                        f"${row['free_cash_flow']/1e9:.1f}" if row['free_cash_flow'] else "N/A"
+                    )
+        except Exception as e:
+            self.query_one("#fin_label").update(f"Error: {e}")
+    
+    def on_button_pressed(self, event: Button.Pressed) -> None:
+        if event.button.id == "back_btn":
+            self.app.pop_screen()
+            self.db.close()
+    
+    def action_back(self):
+        self.app.pop_screen()
+        self.db.close()
 
 
-class DCFValuationApp(App):
-    """Main application class."""
+class ValuationApp(App):
+    """Main TUI application."""
     
     CSS = """
     Screen {
@@ -181,17 +217,24 @@ class DCFValuationApp(App):
     
     Container {
         margin: 1 2;
-        border: solid $accent;
+        border: solid $primary;
         padding: 1;
     }
     
-    Label {
-        margin: 0 1;
-        color: $text;
+    #title {
+        color: $accent;
+        text-style: bold;
+        margin-bottom: 1;
     }
     
-    Select {
-        margin: 1 0;
+    #subtitle {
+        color: $text-muted;
+        margin-bottom: 1;
+    }
+    
+    #button_row {
+        height: 3;
+        margin-top: 1;
     }
     
     Button {
@@ -202,38 +245,20 @@ class DCFValuationApp(App):
         height: auto;
         margin: 1 0;
     }
-    
-    #valuation_summary {
-        border: solid $primary;
-        padding: 1;
-        margin: 1 0;
-        background: $boost;
-    }
-    
-    #metrics_table {
-        margin: 1 0;
-    }
-    
-    #dcf_breakdown {
-        margin: 1 0;
-    }
     """
     
     BINDINGS = [
         Binding("q", "quit", "Quit"),
     ]
     
-    def compose(self) -> ComposeResult:
-        yield CompanySelector()
-
     def on_mount(self):
-        """Initialize application."""
         self.title = "DCF Valuation Analyzer"
+        self.push_screen(CompanyListScreen())
 
 
 def run_tui():
-    """Run the TUI application."""
-    app = DCFValuationApp()
+    """Launch the TUI."""
+    app = ValuationApp()
     app.run()
 
 

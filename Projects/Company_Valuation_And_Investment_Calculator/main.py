@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 DCF Valuation Analyzer - Main Entry Point
-Comprehensive company valuation with TVM, WACC, DCF, and NPV/IRR analysis
+Multi-company database system with Alpaca market data and Finnhub financials
 """
 
 import sys
@@ -12,94 +12,117 @@ from pathlib import Path
 # Add project root to path
 sys.path.insert(0, str(Path(__file__).parent))
 
-from src.database.init_db import CompanyDatabase, init_default_companies
-from src.ingestion.ingestion import FinancialDataIngestion, load_api_key_from_env
-from src.valuation_engine import CompanyValuationEngine, run_valuation
 from src.tui import run_tui
+from src.ingestion.ingestion import DataIngestionPipeline
+from src.database.company_db import CompanyDatabase
+from dotenv import load_dotenv
 
-
-def init_database():
-    """Initialize database with default companies."""
-    print("\n🗄️  Initializing DuckDB database...")
-    init_default_companies()
-    print("✓ Database ready\n")
-
-
-def ingest_data(tickers: list = None):
-    """Ingest financial data from Finnhub."""
-    api_key = load_api_key_from_env()
-    if not api_key:
-        print("❌ Error: FINNHUB_API_KEY not found in .env file")
-        return
-    
-    if tickers is None:
-        tickers = ["AAPL", "MSFT", "GOOGL", "AMZN", "NVDA"]
-    
-    ingestion = FinancialDataIngestion(api_key)
-    ingestion.ingest_multiple(tickers)
-    ingestion.close()
-
-
-def run_single_valuation(ticker: str):
-    """Run DCF valuation for a single company."""
-    api_key = load_api_key_from_env()
-    run_valuation(ticker, api_key)
+load_dotenv()
 
 
 def main():
     """Main entry point."""
     parser = argparse.ArgumentParser(
-        description="DCF Valuation Analyzer - Comprehensive company valuation",
+        description="DCF Valuation Analyzer - Multi-company database system",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  python main.py                    # Run TUI
-  python main.py --init             # Initialize database
-  python main.py --ingest           # Ingest Top 5 companies
-  python main.py --valuate AAPL     # Run DCF for Apple
-  python main.py --ingest AAPL MSFT # Ingest specific companies
+  python main.py                          # Launch TUI
+  python main.py --ingest AAPL MSFT      # Ingest data for companies
+  python main.py --status                 # Show data status
+  python main.py --list                   # List all companies
         """
     )
     
-    parser.add_argument("--init", action="store_true", 
-                       help="Initialize DuckDB database")
-    parser.add_argument("--ingest", nargs="*",
-                       help="Ingest data from Finnhub (optionally specify tickers)")
-    parser.add_argument("--valuate", metavar="TICKER",
-                       help="Run DCF valuation for a company")
+    parser.add_argument("--ingest", nargs="*", metavar="TICKER",
+                       help="Ingest market data from Alpaca and financials from Finnhub")
+    parser.add_argument("--status", action="store_true",
+                       help="Show database status for all companies")
+    parser.add_argument("--list", action="store_true",
+                       help="List all available companies")
+    parser.add_argument("--clean", action="store_true",
+                       help="Remove all company databases")
     
     args = parser.parse_args()
     
-    # If no args, run TUI
-    if len(sys.argv) == 1:
+    # Default: launch TUI
+    if not any([args.ingest is not None, args.status, args.list, args.clean]):
         print("\n" + "="*70)
-        print("  DCF VALUATION ANALYZER")
-        print("="*70)
-        print("\nStarting TUI interface...\n")
-        init_database()
+        print("  DCF VALUATION ANALYZER - Multi-Company Database System")
+        print("="*70 + "\n")
         run_tui()
+        return
     
-    elif args.init:
-        init_database()
+    # Handle --list
+    if args.list:
+        companies = [
+            "AAPL", "MSFT", "GOOGL", "AMZN", "NVDA",
+            "META", "TSLA", "BRK.B", "JPM", "V"
+        ]
+        print(f"\nAvailable companies ({len(companies)}):")
+        for ticker in companies:
+            print(f"  • {ticker}")
+        print()
+        return
     
-    elif args.ingest is not None:
-        tickers = args.ingest if args.ingest else None
-        ingest_data(tickers)
+    # Handle --status
+    if args.status:
+        companies = [
+            "AAPL", "MSFT", "GOOGL", "AMZN", "NVDA",
+            "META", "TSLA", "BRK.B", "JPM", "V"
+        ]
+        print(f"\n{'='*70}")
+        print("  DATABASE STATUS")
+        print(f"{'='*70}\n")
+        print(f"{'Ticker':<10} {'Market Data':<15} {'Latest Price':<15} {'Financials':<15}")
+        print("-"*70)
+        
+        for ticker in companies:
+            db = CompanyDatabase(ticker)
+            price = db.get_current_price()
+            price_str = f"${price:.2f}" if price else "N/A"
+            
+            market_df = db.get_market_data(limit=1)
+            market_status = f"✓ {len(market_df)} records" if not market_df.empty else "Empty"
+            
+            fin_df = db.get_latest_financials(years=1)
+            fin_status = f"✓ {len(fin_df)} years" if not fin_df.empty else "Empty"
+            
+            print(f"{ticker:<10} {market_status:<15} {price_str:<15} {fin_status:<15}")
+            db.close()
+        
+        print(f"\n{'='*70}\n")
+        return
     
-    elif args.valuate:
-        run_single_valuation(args.valuate)
+    # Handle --clean
+    if args.clean:
+        data_dir = Path(__file__).parent / "data" / "companies"
+        if data_dir.exists():
+            import shutil
+            shutil.rmtree(data_dir)
+            print("\n✓ All company databases removed\n")
+        else:
+            print("\nNo databases to clean\n")
+        return
     
-    else:
-        parser.print_help()
+    # Handle --ingest
+    if args.ingest is not None:
+        tickers = args.ingest if args.ingest else [
+            "AAPL", "MSFT", "GOOGL", "AMZN", "NVDA"
+        ]
+        
+        pipeline = DataIngestionPipeline()
+        pipeline.ingest_multiple(tickers)
 
 
 if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
-        print("\n\n✓ Goodbye!")
+        print("\n\n✓ Interrupted")
     except Exception as e:
         print(f"\n❌ Error: {e}")
         import traceback
         traceback.print_exc()
         sys.exit(1)
+
