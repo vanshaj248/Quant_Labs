@@ -62,6 +62,8 @@
 
 **✅ Deliverable:** Excel or Python notebook — DCF model with WACC build-up, NPV/IRR analysis, and a 1-page investment memo (Buy / Hold / Sell recommendation with reasoning).
 
+**Status:** Done ✅
+
 ---
 
 ### M2 · Financial Accounting & Statement Analysis
