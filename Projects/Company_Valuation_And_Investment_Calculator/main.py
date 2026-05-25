@@ -37,9 +37,9 @@ from rich.table import Table
 from rich.console import Console
 from rich import box
 
-import data_fetcher as df
-import db_manager as db
-import finance_calc as fc
+import GitHub.Quant_Labs.Projects.Company_Valuation_And_Investment_Calculator.data_fetcher as df
+import GitHub.Quant_Labs.Projects.Company_Valuation_And_Investment_Calculator.db_manager as db
+import GitHub.Quant_Labs.Projects.Company_Valuation_And_Investment_Calculator.finance_calc as fc
 
 
 # ── Colour palette ─────────────────────────────────────────────────────────────
