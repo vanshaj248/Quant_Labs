@@ -28,10 +28,10 @@ jobs:
           pip install pyinstaller
 
       - name: Build EXE
-        run: |
-          pyinstaller --onedir ^
-          --add-data "databases;databases" ^
-          --name CompanyValuationTerminal ^
+        run: >
+          pyinstaller --onedir
+          --add-data "databases;databases"
+          --name CompanyValuationTerminal
           main.py
 
       - name: Upload Artifact
