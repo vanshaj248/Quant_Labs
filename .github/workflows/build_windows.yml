@@ -8,6 +8,10 @@ jobs:
 
     runs-on: windows-latest
 
+    defaults:
+      run:
+        working-directory: Projects/Company_Valuation_And_Investment_Calculator
+
     steps:
 
       - name: Checkout repository
@@ -34,4 +38,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: CompanyValuationTerminal-Windows
-          path: dist/
+          path: Projects/Company_Valuation_And_Investment_Calculator/dist/
