@@ -8,6 +8,9 @@ jobs:
 
     runs-on: windows-latest
 
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
     defaults:
       run:
         working-directory: Projects/Company_Valuation_And_Investment_Calculator
@@ -24,8 +27,14 @@ jobs:
 
       - name: Install dependencies
         run: |
+          python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install pyinstaller
+
+      - name: Verify files
+        run: |
+          dir
+          dir databases
 
       - name: Build EXE
         run: >
